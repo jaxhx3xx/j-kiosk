@@ -3,7 +3,7 @@
 --  테이블 5개 / 3NF
 --  * 장바구니는 Java 메모리(List)에서 관리, 결제 시 orders + order_item 저장
 -- =========================================
-
+DROP DATABASE IF EXISTS j_kiosk;
 CREATE DATABASE IF NOT EXISTS j_kiosk DEFAULT CHARACTER SET utf8mb4;
 USE j_kiosk;
 
@@ -19,6 +19,7 @@ CREATE TABLE menu (
     category_id  INT NOT NULL,
     name         VARCHAR(50) NOT NULL,
     price        INT NOT NULL,
+    sold_out     BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
@@ -45,6 +46,8 @@ CREATE TABLE order_item (
     menu_id       INT NOT NULL,
     temp          ENUM('HOT', 'ICE') NULL,   -- 디저트는 NULL
     size          ENUM('R', 'L') NULL,
+    shot          INT NOT NULL DEFAULT 0,                              -- 샷 추가 횟수
+    syrup         ENUM('VANILLA', 'HAZELNUT', 'CARAMEL') NULL,  
     quantity      INT NOT NULL DEFAULT 1,
     price         INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
