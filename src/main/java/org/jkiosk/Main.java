@@ -1,25 +1,15 @@
 package org.jkiosk;
 
-import org.jkiosk.db.DBUtil;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.jkiosk.dao.MenuDao;
+import org.jkiosk.model.Menu;
 
 public class Main {
-    public static void main(String[] args) {
-        String sql = "SELECT name, price FROM menu";
+    public static void main(String[] args) throws Exception {
+        MenuDao menuDao = new MenuDao();
 
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                System.out.println(rs.getString("name") + " - " + rs.getInt("price") + "원");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Menu m : menuDao.findByCategory(1)) {
+            String mark = m.isSoldOut() ? " (품절)" : "";
+            System.out.println(m.getName() + " - " + m.getPrice() + "원" + mark);
         }
     }
 }
