@@ -1,4 +1,4 @@
-package org.example;
+package org.jkiosk.db;
 
 import java.io.InputStream;
 import java.sql.Connection;

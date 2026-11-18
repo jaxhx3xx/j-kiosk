@@ -1,4 +1,6 @@
-package org.example;
+package org.jkiosk;
+
+import org.jkiosk.db.DBUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
