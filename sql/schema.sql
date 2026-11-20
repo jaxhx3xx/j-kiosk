@@ -33,6 +33,8 @@ CREATE TABLE customer (
 CREATE TABLE orders (
     order_id     INT AUTO_INCREMENT PRIMARY KEY,
     phone        VARCHAR(13) NULL,
+    order_type   ENUM('STORE', 'TAKEOUT') NOT NULL,   -- 매장 식사 / 포장
+    pay_method   ENUM('CARD', 'CASH') NOT NULL,       -- 카드 / 현금
     order_time   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (phone) REFERENCES customer(phone)
 );
