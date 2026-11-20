@@ -1,0 +1,65 @@
+package org.jkiosk.ui;
+
+import com.formdev.flatlaf.FlatClientProperties;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
+
+// 피그마 디자인의 색, 글꼴, 이미지, 자주 쓰는 버튼을 한 곳에 모아둔 클래스
+public class Theme {
+
+    // ===== 색 (피그마 값 그대로) =====
+    public static final Color BLUE = new Color(0x3182F6);      // 메인 파랑
+    public static final Color TEXT = new Color(0x191F28);      // 진한 글씨
+    public static final Color SUB_TEXT = new Color(0x6B7684);  // 회색 설명 글씨
+    public static final Color LIGHT_BG = new Color(0xF5F7FA);  // 연한 회색 배경
+    public static final Color WHITE = Color.WHITE;
+
+    // ===== 글꼴 =====
+    // 피그마는 Noto Sans KR이지만, 윈도우에 기본으로 있는 맑은 고딕을 사용
+    public static final String FONT_NAME = "Malgun Gothic";
+
+    public static Font bold(int size) {
+        return new Font(FONT_NAME, Font.BOLD, size);
+    }
+
+    public static Font regular(int size) {
+        return new Font(FONT_NAME, Font.PLAIN, size);
+    }
+
+    // ===== 글씨 라벨 만들기 =====
+    public static JLabel label(String text, Font font, Color color) {
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        label.setForeground(color);
+        return label;
+    }
+
+    // ===== 파란 버튼 (피그마의 "버튼/주요") =====
+    public static JButton primaryButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(bold(18));
+        button.setBackground(BLUE);
+        button.setForeground(WHITE);
+        // arc = 모서리 둥글기(지름), 나머지는 테두리와 포커스 표시 없애기
+        button.putClientProperty(FlatClientProperties.STYLE,
+                "arc: 28; borderWidth: 0; focusWidth: 0; innerFocusWidth: 0");
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
+    // ===== 메뉴 이미지 불러오기 =====
+    // src/main/resources/images/menu/1.png 처럼 menu_id 번호로 저장해둔 파일을 읽음
+    public static ImageIcon menuImage(int menuId, int size) {
+        URL url = Theme.class.getResource("/images/menu/" + menuId + ".png");
+
+        if (url == null) {
+            return null; // 아직 이미지 파일이 없으면 빈칸으로 둠
+        }
+
+        Image original = new ImageIcon(url).getImage();
+        Image scaled = original.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaled);
+    }
+}

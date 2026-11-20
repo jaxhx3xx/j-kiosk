@@ -1,15 +1,19 @@
 package org.jkiosk;
 
-import org.jkiosk.dao.MenuDao;
-import org.jkiosk.model.Menu;
+import com.formdev.flatlaf.FlatLightLaf;
+import org.jkiosk.ui.KioskFrame;
+
+import javax.swing.SwingUtilities;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        MenuDao menuDao = new MenuDao();
+    public static void main(String[] args) {
+        // FlatLaf 디자인 적용 (화면을 만들기 전에 해야 함)
+        FlatLightLaf.setup();
 
-        for (Menu m : menuDao.findByCategory(1)) {
-            String mark = m.isSoldOut() ? " (품절)" : "";
-            System.out.println(m.getName() + " - " + m.getPrice() + "원" + mark);
-        }
+        // Swing 화면은 SwingUtilities.invokeLater 안에서 만드는 게 규칙
+        SwingUtilities.invokeLater(() -> {
+            KioskFrame frame = new KioskFrame();
+            frame.setVisible(true);
+        });
     }
 }
