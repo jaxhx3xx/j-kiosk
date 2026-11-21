@@ -53,6 +53,17 @@ public class Theme {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
+    // ===== 회색 버튼 (피그마의 "버튼/보조") =====
+    public static JButton secondaryButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(bold(18));
+        button.setBackground(DISABLED_BG);
+        button.setForeground(BUTTON_TEXT);
+        button.putClientProperty(FlatClientProperties.STYLE,
+                "arc: 28; borderWidth: 0; focusWidth: 0; innerFocusWidth: 0");
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
 
     // ===== 메뉴 이미지 불러오기 =====
     // images/menu/1.png 처럼 menu_id 번호로 저장한 파일

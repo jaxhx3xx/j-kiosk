@@ -123,7 +123,12 @@ public class MenuScreen extends JPanel {
         updateCartBar();
         showCategory(0);
     }
-
+    // 장바구니에서 돌아왔을 때: 보던 탭은 그대로 두고 장바구니 바와 카드 테두리만 새로 고침
+    public void refresh() {
+        closeOptionSheet();
+        updateCartBar();
+        showCategory(currentIndex);
+    }
     // index번째 카테고리를 보여주기 (0 = 커피, 1 = 음료, 2 = 디저트)
     private void showCategory(int index) {
         if (categories.isEmpty()) {

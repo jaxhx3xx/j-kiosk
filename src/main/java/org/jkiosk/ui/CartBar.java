@@ -55,8 +55,7 @@ public class CartBar extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (hasItems) {
-                    // 다음 단계에서 장바구니 화면으로 연결할 예정
-                    System.out.println("장바구니 보기 클릭");
+                    frame.showCart();
                 }
             }
         });

@@ -12,11 +12,13 @@ public class KioskFrame extends JFrame {
     public static final String START = "start";  // 01 시작
     public static final String PLACE = "place";  // 02 매장·포장 선택
     public static final String MENU = "menu";    // 03~05 메뉴
+    public static final String CART = "cart";    // 08 장바구니
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel screens = new JPanel(cardLayout);
 
     private final MenuScreen menuScreen;
+    private final CartScreen cartScreen;
 
     // ===== 주문 정보 =====
     private String orderType;              // 매장 식사("STORE") / 포장("TAKEOUT")
@@ -32,11 +34,13 @@ public class KioskFrame extends JFrame {
 
         // 화면 만들기
         menuScreen = new MenuScreen(this);
+        cartScreen = new CartScreen(this);
 
         // 화면 등록
         screens.add(new StartScreen(this), START);
         screens.add(new PlaceScreen(this), PLACE);
         screens.add(menuScreen, MENU);
+        screens.add(cartScreen, CART);
 
         setContentPane(screens);
         pack();                       // 창 크기를 화면 크기에 맞춤
@@ -48,11 +52,26 @@ public class KioskFrame extends JFrame {
         cardLayout.show(screens, name);
     }
 
-    // 매장/포장을 고르고 메뉴 화면으로 가기
+    // 매장/포장을 고르고 메뉴 화면으로 가기 (커피 탭부터)
     public void startMenu(String orderType) {
         this.orderType = orderType;
-        menuScreen.onShow();  // 배지 바꾸고 커피 탭부터 보여주기
+        menuScreen.onShow();
         showScreen(MENU);
+    }
+
+    // 메뉴 화면으로 돌아가기 (보던 탭 그대로)
+    public void backToMenu() {
+        menuScreen.refresh();
+        showScreen(MENU);
+    }
+
+    // 장바구니 화면으로 가기
+    public void showCart() {
+        if (cart.getItems().isEmpty()) {
+            return;  // 비어 있으면 가지 않음
+        }
+        cartScreen.onShow();
+        showScreen(CART);
     }
 
     // 처음 화면으로 (주문 정보와 장바구니 모두 초기화)
