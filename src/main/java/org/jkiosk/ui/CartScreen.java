@@ -103,10 +103,7 @@ public class CartScreen extends JPanel {
 
         payButton = Theme.primaryButton("");
         payButton.setBounds(169, 20, 351, 60);
-        payButton.addActionListener(e -> {
-            // 다음 단계에서 결제 수단 선택 화면으로 연결할 예정
-            System.out.println("결제하기 클릭");
-        });
+        payButton.addActionListener(e -> frame.showPayment());
         bottomBar.add(payButton);
 
         add(bottomBar);

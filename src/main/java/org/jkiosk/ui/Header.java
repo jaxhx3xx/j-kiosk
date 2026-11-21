@@ -85,4 +85,8 @@ public class Header extends JPanel {
         badgeLabel.setBounds(0, 0, width, 34);
         badge.setVisible(true);
     }
+    // "처음으로" 버튼 켜기/끄기 (결제 중에는 끔)
+    public void setHomeEnabled(boolean enabled) {
+        homeButton.setEnabled(enabled);
+    }
 }
