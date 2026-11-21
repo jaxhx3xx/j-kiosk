@@ -1,10 +1,12 @@
 -- =========================================
 --  J의 키오스크 - DB 스키마 (MySQL 8)
---  테이블 5개 / 3NF
+--  테이블 4개 / 3NF
 --  * 장바구니는 Java 메모리(List)에서 관리, 결제 시 orders + order_item 저장
+--  * 실행하면 DB를 지우고 처음부터 다시 만듦 (주문 데이터도 삭제됨)
 -- =========================================
+
 DROP DATABASE IF EXISTS j_kiosk;
-CREATE DATABASE IF NOT EXISTS j_kiosk DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE j_kiosk DEFAULT CHARACTER SET utf8mb4;
 USE j_kiosk;
 
 -- 1. 카테고리
@@ -23,39 +25,30 @@ CREATE TABLE menu (
     FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
--- 3. 스탬프 회원 (전화번호가 곧 PK)
-CREATE TABLE customer (
-    phone        VARCHAR(13) PRIMARY KEY,
-    stamp        INT NOT NULL DEFAULT 0
-);
-
--- 4. 주문 (회원 1 : N 주문, 스탬프 안 쓰면 phone NULL)
+-- 3. 주문
 CREATE TABLE orders (
     order_id     INT AUTO_INCREMENT PRIMARY KEY,
-    phone        VARCHAR(13) NULL,
     order_type   ENUM('STORE', 'TAKEOUT') NOT NULL,   -- 매장 식사 / 포장
     pay_method   ENUM('CARD', 'CASH') NOT NULL,       -- 카드 / 현금
-    order_time   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (phone) REFERENCES customer(phone)
+    order_time   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 5. 주문 메뉴 (주문 1 : N 주문메뉴, 메뉴 1 : N 주문메뉴)
---    temp/size: 이 줄에서 고른 옵션
+-- 4. 주문 메뉴 (주문 1 : N 주문메뉴, 메뉴 1 : N 주문메뉴)
+--    temp/size/shot/syrup: 이 줄에서 고른 옵션 (디저트는 NULL, shot 0)
 --    price: 옵션 추가금까지 포함한 1개 가격 (주문 당시 가격 기록)
 CREATE TABLE order_item (
     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id      INT NOT NULL,
     menu_id       INT NOT NULL,
-    temp          ENUM('HOT', 'ICE') NULL,   -- 디저트는 NULL
+    temp          ENUM('HOT', 'ICE') NULL,
     size          ENUM('R', 'L') NULL,
     shot          INT NOT NULL DEFAULT 0,                              -- 샷 추가 횟수
-    syrup         ENUM('VANILLA', 'HAZELNUT', 'CARAMEL') NULL,  
+    syrup         ENUM('VANILLA', 'HAZELNUT', 'CARAMEL') NULL,         -- NULL = 없음
     quantity      INT NOT NULL DEFAULT 1,
     price         INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (menu_id)  REFERENCES menu(menu_id)
 );
-SHOW TABLES;
 
 -- 주문 총액은 저장하지 않고 계산
 -- SELECT SUM(price * quantity) FROM order_item WHERE order_id = ?;
