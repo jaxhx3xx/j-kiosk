@@ -68,8 +68,7 @@ public class PlaceScreen extends JPanel {
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                frame.setOrderType(orderType);
-                frame.showScreen(KioskFrame.MENU);
+                frame.startMenu(orderType);
             }
         });
 

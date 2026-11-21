@@ -16,6 +16,9 @@ public class Theme {
     public static final Color BUTTON_TEXT = new Color(0x4E5968);// 테두리 버튼 글씨
     public static final Color LIGHT_BG = new Color(0xF5F7FA);   // 연한 회색 배경
     public static final Color LINE = new Color(0xE5E8EC);       // 구분선, 테두리
+    public static final Color TAB_GRAY = new Color(0xB0B8C1);    // 선택 안 된 탭, 비활성 글씨
+    public static final Color BADGE_BG = new Color(0xEAF3FE);    // 연한 파랑 배지 배경
+    public static final Color DISABLED_BG = new Color(0xF2F4F6); // 비활성 버튼 배경
     public static final Color WHITE = Color.WHITE;
 
     // ===== 글꼴 =====
@@ -74,5 +77,9 @@ public class Theme {
         Image original = new ImageIcon(url).getImage();
         Image scaled = original.getScaledInstance(size, size, Image.SCALE_SMOOTH);
         return new ImageIcon(scaled);
+    }
+    // 가격 글씨 만들기: 2000 → "2,000원"
+    public static String won(int price) {
+        return String.format("%,d원", price);
     }
 }
