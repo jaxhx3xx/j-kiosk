@@ -10,10 +10,17 @@ import java.awt.event.MouseEvent;
 // 메뉴 카드 하나 (이미지 + 이름 + 가격). 크기 242 x 262
 public class MenuCard extends RoundPanel {
 
-    public MenuCard(Menu menu, KioskFrame frame) {
+    // inCart: 장바구니에 담긴 메뉴면 true (파란 테두리)
+    public MenuCard(Menu menu, boolean inCart, MenuScreen menuScreen) {
         super(Theme.WHITE, 16);
-        setBorderColor(Theme.LINE);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        if (inCart) {
+            setBorderColor(Theme.BLUE);
+            setBorderWidth(2);
+        } else {
+            setBorderColor(Theme.LINE);
+        }
 
         // ----- 품절이면: 반투명 흰 막 + "품절" 표시 -----
         // Swing은 먼저 add한 것이 맨 위에 그려져서, 품절 막을 가장 먼저 넣음
@@ -58,11 +65,10 @@ public class MenuCard extends RoundPanel {
             public void mouseClicked(MouseEvent e) {
                 if (menu.isSoldOut()) {
                     // 품절 안내 (나중에 피그마 18번 팝업 모양으로 바꿀 예정)
-                    JOptionPane.showMessageDialog(frame,
+                    JOptionPane.showMessageDialog(menuScreen,
                             menu.getName() + "\n품절된 메뉴예요. 다른 메뉴를 선택해 주세요.");
                 } else {
-                    // 다음 단계에서 옵션 선택 화면으로 연결할 예정
-                    System.out.println("선택한 메뉴: " + menu.getName());
+                    menuScreen.openOptionSheet(menu);
                 }
             }
         });

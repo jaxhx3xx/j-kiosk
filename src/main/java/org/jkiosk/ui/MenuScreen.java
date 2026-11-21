@@ -2,6 +2,8 @@ package org.jkiosk.ui;
 
 import org.jkiosk.dao.CategoryDao;
 import org.jkiosk.dao.MenuDao;
+import org.jkiosk.model.Cart;
+import org.jkiosk.model.CartItem;
 import org.jkiosk.model.Category;
 import org.jkiosk.model.Menu;
 
@@ -13,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// 03~05 메뉴 화면 (카테고리 탭 + 메뉴 카드 + 장바구니 바)
+// 03~05 메뉴 화면 (카테고리 탭 + 메뉴 카드 + 장바구니 바 + 옵션 창)
 public class MenuScreen extends JPanel {
 
     private final KioskFrame frame;
@@ -30,6 +32,11 @@ public class MenuScreen extends JPanel {
     private List<Category> categories = new ArrayList<>();
     private final List<JLabel> tabLabels = new ArrayList<>();  // 탭 글씨들
     private final List<JPanel> tabLines = new ArrayList<>();   // 탭 아래 파란 선들
+    private int currentIndex = 0;  // 지금 보고 있는 탭 번호
+
+    private OptionSheet optionSheet;  // 열려 있는 옵션 창 (없으면 null)
+    private RoundPanel toast;         // "장바구니에 담았어요" 알림
+    private Timer toastTimer;         // 알림을 1.5초 뒤에 없애는 타이머
 
     public MenuScreen(KioskFrame frame) {
         this.frame = frame;
@@ -109,9 +116,11 @@ public class MenuScreen extends JPanel {
         }
     }
 
-    // 이 화면에 들어올 때마다 호출: 헤더 배지 바꾸고, 첫 번째 탭 보여주기
+    // 이 화면에 들어올 때마다 호출
     public void onShow() {
+        closeOptionSheet();
         header.setOrderType(frame.getOrderType());
+        updateCartBar();
         showCategory(0);
     }
 
@@ -120,6 +129,7 @@ public class MenuScreen extends JPanel {
         if (categories.isEmpty()) {
             return;  // DB 연결 실패 등으로 카테고리가 없으면 아무것도 안 함
         }
+        currentIndex = index;
 
         // 1. 탭 색 바꾸기 (선택된 탭만 진한 글씨 + 파란 선)
         for (int i = 0; i < tabLabels.size(); i++) {
@@ -154,17 +164,87 @@ public class MenuScreen extends JPanel {
 
         // 4. 메뉴 카드 다시 그리기 (2줄 x 2칸)
         menuArea.removeAll();
+        Cart cart = frame.getCart();
 
         for (int i = 0; i < menus.size(); i++) {
+            Menu menu = menus.get(i);
             int col = i % 2;  // 0이면 왼쪽, 1이면 오른쪽
             int row = i / 2;  // 0이면 윗줄, 1이면 아랫줄
 
-            MenuCard card = new MenuCard(menus.get(i), frame);
+            boolean inCart = cart.contains(menu.getMenuId());
+            MenuCard card = new MenuCard(menu, inCart, this);
             card.setBounds(20 + col * 258, row * 278, 242, 262);  // 카드 242 + 간격 16
             menuArea.add(card);
         }
 
         menuArea.revalidate();
         menuArea.repaint();
+    }
+
+    // ===== 옵션 창 =====
+
+    // 메뉴 카드를 누르면 옵션 창 열기
+    public void openOptionSheet(Menu menu) {
+        closeOptionSheet();
+        optionSheet = new OptionSheet(this, menu);
+        add(optionSheet, 0);  // 0번 = 맨 위에 그려짐
+        revalidate();
+        repaint();
+    }
+
+    // 옵션 창 닫기
+    public void closeOptionSheet() {
+        if (optionSheet != null) {
+            remove(optionSheet);
+            optionSheet = null;
+            repaint();
+        }
+    }
+
+    // 옵션 창에서 "담기"를 누르면
+    public void addToCart(CartItem item) {
+        frame.getCart().add(item);
+        closeOptionSheet();
+        updateCartBar();
+        showCategory(currentIndex);  // 담은 메뉴 카드에 파란 테두리 표시
+        showToast();
+    }
+
+    // 장바구니 바를 지금 장바구니 상태에 맞게 바꾸기
+    public void updateCartBar() {
+        Cart cart = frame.getCart();
+        cartBar.update(cart.getTotalCount(), cart.getTotalPrice());
+    }
+
+    // ===== "장바구니에 담았어요" 알림 (1.5초 뒤 사라짐) =====
+    private void showToast() {
+        // 이전 알림이 남아 있으면 먼저 지우기
+        if (toast != null) {
+            remove(toast);
+            toastTimer.stop();
+        }
+
+        toast = new RoundPanel(Theme.TEXT, 12);  // 진한 남색 배경
+        toast.setBounds(174, 780, 192, 44);
+
+        JLabel check = new JLabel(Theme.icon("check", 20));
+        check.setBounds(16, 12, 20, 20);
+        toast.add(check);
+
+        JLabel text = Theme.label("장바구니에 담았어요", Theme.regular(15), Theme.WHITE);
+        text.setBounds(44, 0, 140, 44);
+        toast.add(text);
+
+        add(toast, 0);
+        repaint();
+
+        // 1.5초(1500ms) 뒤에 알림 지우기
+        toastTimer = new Timer(1500, e -> {
+            remove(toast);
+            toast = null;
+            repaint();
+        });
+        toastTimer.setRepeats(false);  // 한 번만 실행
+        toastTimer.start();
     }
 }

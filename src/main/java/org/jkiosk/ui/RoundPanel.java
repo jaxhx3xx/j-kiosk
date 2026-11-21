@@ -2,12 +2,14 @@ package org.jkiosk.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 // 모서리가 둥근 패널. 피그마의 radius 값을 그대로 넣으면 됨
 public class RoundPanel extends JPanel {
 
     private final int radius;
-    private Color borderColor;  // null이면 테두리 없음
+    private Color borderColor;    // null이면 테두리 없음
+    private int borderWidth = 1;  // 테두리 두께
 
     public RoundPanel(Color background, int radius) {
         this.radius = radius;
@@ -16,9 +18,13 @@ public class RoundPanel extends JPanel {
         setLayout(null);   // 안에 넣는 것도 피그마 좌표 그대로 배치
     }
 
-    // 테두리 색 정하기 (메뉴 카드처럼 테두리가 있는 경우)
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+        repaint();
+    }
+
+    public void setBorderWidth(int borderWidth) {
+        this.borderWidth = borderWidth;
         repaint();
     }
 
@@ -36,7 +42,13 @@ public class RoundPanel extends JPanel {
         // 테두리 그리기 (있을 때만)
         if (borderColor != null) {
             g2.setColor(borderColor);
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius * 2, radius * 2);
+            g2.setStroke(new BasicStroke(borderWidth));
+
+            // 선이 바깥으로 잘리지 않게 두께의 반만큼 안쪽에 그림
+            float half = borderWidth / 2f;
+            g2.draw(new RoundRectangle2D.Float(half, half,
+                    getWidth() - borderWidth, getHeight() - borderWidth,
+                    radius * 2, radius * 2));
         }
 
         g2.dispose();

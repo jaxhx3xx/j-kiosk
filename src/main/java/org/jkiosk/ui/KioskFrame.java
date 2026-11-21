@@ -1,5 +1,7 @@
 package org.jkiosk.ui;
 
+import org.jkiosk.model.Cart;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,8 +18,9 @@ public class KioskFrame extends JFrame {
 
     private final MenuScreen menuScreen;
 
-    // 주문 정보: 매장 식사("STORE") / 포장("TAKEOUT")
-    private String orderType;
+    // ===== 주문 정보 =====
+    private String orderType;              // 매장 식사("STORE") / 포장("TAKEOUT")
+    private final Cart cart = new Cart();  // 장바구니
 
     public KioskFrame() {
         setTitle("J의 키오스크");
@@ -52,13 +55,18 @@ public class KioskFrame extends JFrame {
         showScreen(MENU);
     }
 
-    // 처음 화면으로 (주문 정보도 초기화)
+    // 처음 화면으로 (주문 정보와 장바구니 모두 초기화)
     public void goHome() {
         orderType = null;
+        cart.clear();
         showScreen(START);
     }
 
     public String getOrderType() {
         return orderType;
+    }
+
+    public Cart getCart() {
+        return cart;
     }
 }
