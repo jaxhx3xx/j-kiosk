@@ -10,10 +10,12 @@ import java.net.URL;
 public class Theme {
 
     // ===== 색 (피그마 값 그대로) =====
-    public static final Color BLUE = new Color(0x3182F6);      // 메인 파랑
-    public static final Color TEXT = new Color(0x191F28);      // 진한 글씨
-    public static final Color SUB_TEXT = new Color(0x6B7684);  // 회색 설명 글씨
-    public static final Color LIGHT_BG = new Color(0xF5F7FA);  // 연한 회색 배경
+    public static final Color BLUE = new Color(0x3182F6);       // 메인 파랑
+    public static final Color TEXT = new Color(0x191F28);       // 진한 글씨
+    public static final Color SUB_TEXT = new Color(0x6B7684);   // 회색 설명 글씨
+    public static final Color BUTTON_TEXT = new Color(0x4E5968);// 테두리 버튼 글씨
+    public static final Color LIGHT_BG = new Color(0xF5F7FA);   // 연한 회색 배경
+    public static final Color LINE = new Color(0xE5E8EC);       // 구분선, 테두리
     public static final Color WHITE = Color.WHITE;
 
     // ===== 글꼴 =====
@@ -50,12 +52,23 @@ public class Theme {
     }
 
     // ===== 메뉴 이미지 불러오기 =====
-    // src/main/resources/images/menu/1.png 처럼 menu_id 번호로 저장해둔 파일을 읽음
+    // images/menu/1.png 처럼 menu_id 번호로 저장한 파일
     public static ImageIcon menuImage(int menuId, int size) {
-        URL url = Theme.class.getResource("/images/menu/" + menuId + ".png");
+        return loadImage("/images/menu/" + menuId + ".png", size);
+    }
+
+    // ===== 아이콘 불러오기 =====
+    // images/icon/home.png 처럼 이름으로 저장한 파일
+    public static ImageIcon icon(String name, int size) {
+        return loadImage("/images/icon/" + name + ".png", size);
+    }
+
+    // resources 폴더 안의 이미지를 읽어서 정사각형 size 크기로 줄임
+    private static ImageIcon loadImage(String path, int size) {
+        URL url = Theme.class.getResource(path);
 
         if (url == null) {
-            return null; // 아직 이미지 파일이 없으면 빈칸으로 둠
+            return null; // 파일이 없으면 빈칸으로 둠
         }
 
         Image original = new ImageIcon(url).getImage();

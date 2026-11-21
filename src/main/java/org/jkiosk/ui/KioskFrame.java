@@ -11,9 +11,13 @@ public class KioskFrame extends JFrame {
     // 화면 이름 (화면을 바꿀 때 이 이름으로 부름)
     public static final String START = "start";  // 01 시작
     public static final String PLACE = "place";  // 02 매장·포장 선택
+    public static final String MENU = "menu";    // 03~05 메뉴
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel screens = new JPanel(cardLayout);
+
+    // 주문 정보: 매장 식사("STORE") / 포장("TAKEOUT")
+    private String orderType;
 
     public KioskFrame() {
         setTitle("J의 키오스크");
@@ -25,7 +29,8 @@ public class KioskFrame extends JFrame {
 
         // 화면 등록
         screens.add(new StartScreen(this), START);
-        screens.add(makeTempScreen("02 매장·포장 선택 (만드는 중)"), PLACE);
+        screens.add(new PlaceScreen(this), PLACE);
+        screens.add(makeTempScreen("03 메뉴 (만드는 중)"), MENU);
 
         setContentPane(screens);
         pack();                       // 창 크기를 화면 크기에 맞춤
@@ -35,6 +40,21 @@ public class KioskFrame extends JFrame {
     // 다른 화면으로 바꾸기
     public void showScreen(String name) {
         cardLayout.show(screens, name);
+    }
+
+    // 처음 화면으로 (주문 정보도 초기화)
+    public void goHome() {
+        orderType = null;
+        showScreen(START);
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+        System.out.println("선택: " + orderType);  // 확인용 (나중에 지울 예정)
+    }
+
+    public String getOrderType() {
+        return orderType;
     }
 
     // 아직 안 만든 화면 자리에 임시로 넣는 화면 (누르면 시작 화면으로 돌아감)
@@ -49,7 +69,7 @@ public class KioskFrame extends JFrame {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showScreen(START);
+                goHome();
             }
         });
         return panel;
